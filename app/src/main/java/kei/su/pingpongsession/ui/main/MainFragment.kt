@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import kei.su.pingpongsession.R
 import kei.su.pingpongsession.SessionService
 import kei.su.pingpongsession.databinding.MainFragmentBinding
+import kei.su.pingpongsession.SessionService.PingPongEvent.*
 
 class MainFragment : Fragment(){
 
@@ -32,6 +33,11 @@ class MainFragment : Fragment(){
         return inflater.inflate(R.layout.main_fragment, container, false)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        sessionService?.timer?.cancel()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = MainFragmentBinding.bind(view)
@@ -42,11 +48,11 @@ class MainFragment : Fragment(){
         }
 
         binding.btnPing.setOnClickListener{
-            sessionService?.setEvent(0)
+            sessionService?.startEvent(PING)
         }
 
         binding.btnPong.setOnClickListener{
-            sessionService?.setEvent(1)
+            sessionService?.startEvent(PONG)
         }
 
 

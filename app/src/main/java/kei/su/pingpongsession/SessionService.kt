@@ -10,7 +10,7 @@ import android.util.Log
 class SessionService : Service() {
     private var timeInSeconds: Long = 0
     private lateinit var timerCountCallBack: TimerCountCallBack
-    private lateinit var timer: CountDownTimer
+    lateinit var timer: CountDownTimer
     private var sessionStartTime: Long = 0
     private val mBinder = MyBinder()
     private var sessionStarted = false
@@ -19,6 +19,10 @@ class SessionService : Service() {
         const val PING_EVENT_TIME = 600000L
         const val PONG_EVENT_TIME = 120000L
         const val NEW_SESSION_TIME = 600000L
+    }
+
+    enum class PingPongEvent{
+        PING, PONG
     }
 
     override fun onBind(p0: Intent?): IBinder? {
@@ -36,13 +40,13 @@ class SessionService : Service() {
         }
     }
 
-    fun setEvent(event: Int){
+    fun startEvent(event: PingPongEvent){
         if (sessionStarted) {
             // ping event
-            if (event == 0)
+            if (event == PingPongEvent.PING)
                 processEvent(PING_EVENT_TIME)
             // pong event
-            else if (event == 1)
+            else if (event == PingPongEvent.PONG)
                 processEvent(PONG_EVENT_TIME)
         } else {
             sessionStartTime = System.currentTimeMillis()
