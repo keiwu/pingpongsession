@@ -21,6 +21,7 @@ class MainFragment : Fragment(){
         fun newInstance() = MainFragment()
     }
 
+    private lateinit var binding: MainFragmentBinding
     private var sessionService: SessionService? = null
     private lateinit var viewModel: MainViewModel
 
@@ -33,7 +34,7 @@ class MainFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = MainFragmentBinding.bind(view)
+        binding = MainFragmentBinding.bind(view)
         binding.btnStartService.setOnClickListener{
             val intent = Intent(context, SessionService::class.java)
             requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
@@ -51,10 +52,22 @@ class MainFragment : Fragment(){
 
     }
 
+    val callBack = object: SessionService.TimerCountCallBack{
+        override fun onCount(time: Long) {
+           binding.tvStatus.text = String.format(getString(R.string.session_time_left), time)
+        }
+
+        override fun onCountFinished(sessionDuration: Long) {
+            binding.tvStatus.text = String.format(getString(R.string.session_duration), sessionDuration)
+        }
+
+    }
+
     private val serviceConnection = object: ServiceConnection{
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             val b = binder as SessionService.MyBinder
             sessionService = b.getService()
+            sessionService?.setCallBack(callBack)
 
         }
 

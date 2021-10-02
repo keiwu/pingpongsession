@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toTopOf="@id/btnPing"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvStatus" />
 
     <Button
         android:id="@+id/btnPing"

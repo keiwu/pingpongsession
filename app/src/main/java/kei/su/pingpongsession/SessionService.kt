@@ -8,6 +8,8 @@ import android.os.IBinder
 import android.util.Log
 
 class SessionService : Service() {
+    private var timeInSeconds: Long = 0
+    private lateinit var timerCountCallBack: TimerCountCallBack
     private lateinit var timer: CountDownTimer
     private var sessionStartTime: Long = 0
     private val mBinder = MyBinder()
@@ -57,17 +59,30 @@ class SessionService : Service() {
         timer = object: CountDownTimer(totalTime, 1000){
             override fun onTick(msUntilFinished: Long) {
                 timeRemaining = msUntilFinished
-                Log.d("timer", "seconds remaining ${timeRemaining / 1000}")
+                timeInSeconds = timeRemaining / 1000
+                timerCountCallBack.onCount(timeInSeconds)
+                Log.d("timer", "seconds remaining $timeInSeconds")
             }
 
             override fun onFinish() {
                 sessionStarted = false
-                Log.d("timer", "session lasted ${(System.currentTimeMillis() - 
-                sessionStartTime) / 1000}")
+                val sessionDuration = (System.currentTimeMillis() - sessionStartTime) / 1000
+                Log.d("timer", "session lasted $sessionDuration")
+                timerCountCallBack.onCountFinished(sessionDuration)
             }
         }
         timer.start()
         sessionStarted = true
 
+    }
+
+    fun setCallBack(callBack: TimerCountCallBack){
+        timerCountCallBack = callBack
+    }
+
+    interface TimerCountCallBack{
+        fun onCount(time: Long)
+
+        fun onCountFinished(sessionDuration: Long)
     }
 }

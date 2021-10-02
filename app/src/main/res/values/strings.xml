@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PingPongSession</string>
+    <string name="session_time_left">Session time left: %1$d</string>
+    <string name="session_duration">Session duration: %1$d</string>
 </resources>
