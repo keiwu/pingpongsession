@@ -45,6 +45,7 @@ class MainFragment : Fragment(){
             val intent = Intent(context, SessionService::class.java)
             requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
             binding.tvStatus.text = "Service started......"
+            binding.btnStartService.isEnabled = false
         }
 
         binding.btnPing.setOnClickListener{

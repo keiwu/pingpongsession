@@ -44,7 +44,7 @@ class SessionService : Service() {
         if (sessionStarted) {
             // ping event
             if (event == PingPongEvent.PING)
-                processEvent(PING_EVENT_TIME)
+                processPingEvent(PING_EVENT_TIME)
             // pong event
             else if (event == PingPongEvent.PONG)
                 processEvent(PONG_EVENT_TIME)
@@ -55,12 +55,8 @@ class SessionService : Service() {
         }
     }
 
-    private fun processEvent(eventTime: Long) {
-        if (sessionStarted)
-            timer.cancel()
-
-        val totalTime = timeRemaining + eventTime
-        timer = object: CountDownTimer(totalTime, 1000){
+    private fun setTimer(time: Long){
+        timer = object: CountDownTimer(time, 1000){
             override fun onTick(msUntilFinished: Long) {
                 timeRemaining = msUntilFinished
                 timeInSeconds = timeRemaining / 1000
@@ -75,6 +71,24 @@ class SessionService : Service() {
                 timerCountCallBack.onCountFinished(sessionDuration)
             }
         }
+    }
+
+    private fun processPingEvent(eventTime: Long) {
+        if (sessionStarted)
+            timer.cancel()
+
+        setTimer(eventTime)
+        timer.start()
+        sessionStarted = true
+
+    }
+
+    private fun processEvent(eventTime: Long) {
+        if (sessionStarted)
+            timer.cancel()
+
+        val totalTime = timeRemaining + eventTime
+        setTimer(totalTime)
         timer.start()
         sessionStarted = true
 
